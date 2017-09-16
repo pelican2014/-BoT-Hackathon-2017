@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="container">
+
+
+<div class="row">
+  <div class="col-xs-3">
+    <div class="well shadow" id="l-panel">
+      <div>
+    </div>
+  </div>
+  <div class="col-xs-9">
+
+    <!-- <ul>
+
+    {% for d in data %}
+        <li>{{ d.nameStr}}</li>
+        <li>{{ d.when }}</li>
+        <li>{{ d.lat }}</li>
+        <li>{{ d.lng }}</li>
+        <li>{{ d.crowdedness }}</li>
+    {% endfor %}
+
+    </ul> -->
+
+    <div class="hidden" id="geoJSON">{{geoJSON}}</div>
+    <div class="hidden" id="min_crowdedness">{{min_crowdedness}}</div>
+    <div class="hidden" id="max_crowdedness">{{max_crowdedness}}</div>
+
+    <div class="shadow" id="map"></div>
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 1.352083, lng: 103.819836},
+          zoom: 12
+        });
+
+        //map.data.add({geometry: {lat: 1.352083, lng: 103.819836}});
+        var geoJSON = JSON.parse($('#geoJSON').text());
+        // console.log(geoJSON);
+        map.data.addGeoJson(geoJSON);
+
+      map.data.setStyle(function(feature) {
+          var crowdedness = feature.getProperty('crowdedness');
+          return {
+            icon: getCircle(crowdedness)
+          };
+        });
+      }
+
+      var min_crowdedness = parseInt($('#min_crowdedness').text());
+      var max_crowdedness = parseInt($('#max_crowdedness').text());
+
+      function scaleCrowdedness(crowdedness){
+        var min = min_crowdedness;
+        var max = max_crowdedness;
+        var range = max - min;
+        if (min == max) return .5;
+        return (crowdedness - min) / range;
+      }
+
+      function getCircle(crowdedness) {
+        var s = scaleCrowdedness(crowdedness);
+        return {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: 'red', // rgbToHex(255,Math.floor(255 - 255 * s),0),
+          fillOpacity: .9,
+          scale: 5 + 10 * s,
+          strokeColor: 'white',
+          strokeWeight: .5
+        };
+      }
+
+      function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+      }
+
+      function rgbToHex(r, g, b) {
+        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+      }
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBczfq_54aJqmkP4M4Lm4h_Nqx6ZDyczu0&callback=initMap"
+    async defer></script>
+  </div>
+</div>
+
+</div>
+
+{% endblock %}

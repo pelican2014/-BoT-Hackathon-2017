@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="container">
+
+
+<div class="row">
+  <div class="col-xs-3">
+    <div class="well shadow" id="l-panel">
+      <a class="no-decor" href="/"><div class="media tab">
+        <div class="media-left" aria-hidden="true"><img src="static/map.png" /></div>
+        <div class="media-body media-middle">
+          Map
+        </div>
+      </div></a>
+
+      <div class="media tab">
+        <div class="media-left" aria-hidden="true"><img src="static/mag.png" /></div>
+        <div class="media-body media-middle">
+          Find by Category
+        </div>
+      </div>
+
+      <!-- <div id="demo" class="collapse"> -->
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Restaurants
+          </div>
+        </div>
+
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Food Courts
+          </div>
+        </div>
+
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Hawker Centres
+          </div>
+        </div>
+
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Cafes
+          </div>
+        </div>
+
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Bars
+          </div>
+        </div>
+
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Coffee Shops
+          </div>
+        </div>
+
+        <div class="media tab-sub tab-sub-bottom">
+          <div class="media-body media-middle">
+            Dining Halls
+          </div>
+        </div>
+      <!-- </div> -->
+
+    </div>
+  </div>
+  <div class="col-xs-9">
+    <div class="row">
+      <div class="col-xs-6 vb" id="title-wrap">
+        <h1 id='blk'>Blk 71&nbsp;&nbsp;&nbsp;</h1>
+      </div>
+      <div class="col-xs-6 vb" id="cl-wrap">
+        <table><tr><td><p>&nbsp;</p></td></tr><tr><td><span id="dashboard-cl"></span></td></table>
+      </div>
+    </div>
+    <hr />
+
+
+    <div class="hidden" id="avg">{{avg}}</div>
+
+  <script>
+        $(function(){
+          $('#cl-wrap').height($('#title-wrap').height());
+          var lvl = Math.round(parseInt($('#avg').text()));
+          console.log(lvl);
+          var gc = getColor(lvl);
+          var txt = getText(lvl);
+
+          $('#dashboard-cl').css('background-color', gc).text(txt);
+          if (gc == 'yellow'){
+            $('#dashboard-cl').css('color', 'black');
+          } else {
+            $('#dashboard-cl').css('color', 'white');
+          }
+        });
+        function getColor(level){
+          if (level <= 2){
+            return 'green';
+          } else if (level == 3){
+            return 'yellow';
+          } else if (level == 4){
+            return 'orange';
+          } else {
+            return 'red';
+          }
+        }
+        function getText(level){
+          var CROWDEDNESS = ['Not', 'Not very', 'Somewhat', 'Pretty', 'Extremely'];
+          if (level < 1){
+            return 'No Data';
+          } else {
+            return (CROWDEDNESS[level - 1] + ' crowded');
+          }
+        }
+  </script>
+  </div>
+</div>
+
+</div>
+
+{% endblock %}

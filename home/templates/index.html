@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+<% load static %>
+<link rel='stylesheet' type='text/css' href='{% static 'css/font-awesome.css' %}' />
+
+{% block content %}
+
+<div class="container">
+
+
+<div class="row">
+  <div class="col-xs-3">
+    <div class="well shadow" id="l-panel">
+      <a class="no-decor" href="/"><div class="media tab">
+        <div class="media-left" aria-hidden="true"><img src="static/map.png" /></div>
+        <div class="media-body media-middle">
+          Map
+        </div>
+      </div></a>
+
+      <div class="media tab">
+        <div class="media-left" aria-hidden="true"><img src="static/mag.png" /></div>
+        <div class="media-body media-middle">
+          Find by Category
+        </div>
+      </div>
+
+      <!-- <div id="demo" class="collapse"> -->
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Restaurants
+          </div>
+        </div>
+
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Food Courts
+          </div>
+        </div>
+
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Hawker Centres
+          </div>
+        </div>
+
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Cafes
+          </div>
+        </div>
+
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Bars
+          </div>
+        </div>
+
+        <div class="media tab-sub">
+          <div class="media-body media-middle">
+            Coffee Shops
+          </div>
+        </div>
+
+        <div class="media tab-sub tab-sub-bottom">
+          <div class="media-body media-middle">
+            Dining Halls
+          </div>
+        </div>
+      <!-- </div> -->
+
+    </div>
+  </div>
+
+  <div class="col-xs-9">
+
+<!--     <ul>
+
+    {% for d in data %}
+        <li>{{ d.nameStr}}</li>
+        <li>{{ d.when|date:"U" }}</li>
+        <li>{{ d.lat }}</li>
+        <li>{{ d.lng }}</li>
+        <li>{{ d.crowdedness }}</li>
+    {% endfor %}
+
+    </ul> -->
+
+    <div class="hidden" id="geoJSON">{{geoJSON}}</div>
+    <div class="hidden" id="min_crowdedness">{{min_crowdedness}}</div>
+    <div class="hidden" id="max_crowdedness">{{max_crowdedness}}</div>
+
+    <div class="wrapper">
+      <div class="shadow" id="map"></div>
+      <div class="hidden well shadow" id="info-box">
+        <table><tr><td rowspan="2"><span id='name'></span></td><td><span id='tp'></span></td></tr><tr><td><span id="c-l"></span></td></tr></table>
+      </div>
+    </div>
+
+    </div>
+    <script>
+      var map;
+      var mx = my = cx = cy = 0;
+      var cr_data = '';
+
+      $(function(){
+        // $('#l-panel').height($('.wrapper').height());
+        var o = $('.wrapper').offset();
+        cx = o.left;
+        cy = o.top + $('.wrapper').height();
+
+        $(window).resize(function(){
+          // $('#l-panel').height($('.wrapper').height());
+          var o = $('.wrapper').offset();
+          cx = o.left;
+          cy = o.top + $('.wrapper').height();
+        });
+
+        $(".wrapper").mousemove(function(e) {
+          mx = e.pageX;
+          my = e.pageY;
+        })
+
+        // AJAX
+        ajaxUpdate();
+      });
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 1.352083, lng: 103.819836},
+          zoom: 12
+        });
+
+        //map.data.add({geometry: {lat: 1.352083, lng: 103.819836}});
+        var geoJSON = JSON.parse($('#geoJSON').text());
+        // console.log(geoJSON);
+        map.data.addGeoJson(geoJSON);
+
+        map.data.setStyle(function(feature) {
+          var crowdedness = feature.getProperty('crowdedness');
+          return {
+            icon: getCircle(crowdedness)
+          };
+        });
+
+        map.data.addListener('mouseover', function(event) {
+          if (event.feature.getProperty('name') == 'Star Vista Gallery Hall'){
+            feature_cr = parseInt(event.feature.getProperty('crowdedness'));
+            if (cr_data != '' && cr_data != feature_cr){
+              event.feature.setProperty('crowdedness', parseInt(cr_data));
+            }
+          }
+          
+          if ($('#info-box').hasClass('hidden')){
+            $('#info-box').removeClass('hidden');
+          }
+          $('#info-box #name').text(event.feature.getProperty('name'));
+          $('#info-box #tp').text(event.feature.getProperty('type'));
+          $('#info-box #c-l').text(getText(parseInt(event.feature.getProperty('crowdedness'))));
+
+          var gc = getColor(parseInt(event.feature.getProperty('crowdedness')));
+          $('#info-box #c-l').css('background-color', gc);
+          if (gc == 'yellow'){
+            $('#info-box #c-l').css('color', 'black');
+          } else {
+            $('#info-box #c-l').css('color', 'white');
+          }
+          $('#info-box').css('transform', `translate(${mx-cx}px,${my-cy}px)`);
+          // $('#info-box').css('', '');
+        });
+
+        map.data.addListener('mouseout', function(event) {
+          if (!$('#info-box').hasClass('hidden')){
+            $('#info-box').addClass('hidden');
+          }
+        });
+      }
+
+      var min_crowdedness = parseInt($('#min_crowdedness').text());
+      var max_crowdedness = parseInt($('#max_crowdedness').text());
+
+      function getLevel(crowdedness){
+        var min = min_crowdedness;
+        var max = max_crowdedness;
+        var cr = crowdedness;
+        var bin = (max - min) / 5
+        if (cr < bin){
+          return 1;
+        } else if (cr < bin * 2){
+          return 2;
+        } else if (cr < bin * 3){
+          return 3;
+        } else if (cr < bin * 4){
+          return 4;
+        } else {
+          return 5;
+        }
+        return level;
+        // if (min == max) return .5;
+        // return (crowdedness - min) / range;
+      }
+
+      function getColor(level){
+        if (level <= 2){
+          return 'green';
+        } else if (level == 3){
+          return 'yellow';
+        } else if (level == 4){
+          return 'orange';
+        } else {
+          return 'red';
+        }
+      }
+
+      function getText(level){
+        var CROWDEDNESS = ['Not', 'Not very', 'Somewhat', 'Pretty', 'Extremely'];
+        if (level < 1){
+          return 'No Data';
+        } else {
+          return (CROWDEDNESS[level - 1] + ' crowded');
+        }
+      }
+
+      function getCircle(crowdedness) {
+        // var l = getLevel(crowdedness);
+        var col = getColor(crowdedness);
+        return {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: col, // rgbToHex(255,Math.floor(255 - 255 * s),0),
+          fillOpacity: .5,
+          scale: 5,
+          strokeColor: 'white',
+          strokeWeight: .5
+        };
+      }
+
+      function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+      }
+
+      function rgbToHex(r, g, b) {
+        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+      }
+
+      function ajaxUpdate(){
+        $.ajax({
+          url: "http://crowdedmah.herokuapp.com/getcrowdedness",
+          method: 'get',
+          success: function(data){
+            cr_data = data;
+          },
+          failure: function(data){}
+        })
+        setTimeout(5000, ajaxUpdate)
+      }
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBczfq_54aJqmkP4M4Lm4h_Nqx6ZDyczu0&callback=initMap"
+    async defer></script>
+  </div>
+</div>
+
+</div>
+
+{% endblock %}

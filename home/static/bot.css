@@ -1,0 +1,149 @@
+.vb {
+	/*position: relative;*/
+	vertical-align: middle !important;
+}
+
+#blk {
+	font-size: 48px;
+	margin-top: 14px;
+	margin-left: 24px;
+	padding-bottom: 0;
+}
+
+.no-decor {
+	text-decoration: none !important;
+	color: #000;
+}
+
+body * {
+    /*font-family: "Roboto" !important;*/
+}
+.shadow {
+    box-shadow: 2px 4px 8px 0 rgba(0, 0, 0, 0.20), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+/* Always set the map height explicitly to define the size of the div
+* element that contains the map. */
+#map {
+    margin: auto;
+    width: 100vh;
+    height: 610px;
+}
+
+
+#info-box {
+	padding: 5px;
+	padding-bottom: 0;
+	color: rgb(80,80,80);
+	border: none;
+	background-color: rgba(255,255,255,.7);
+	position: absolute;
+	transition: all .5s;
+	transform: translate(0,0);
+}
+
+#info-box > p {
+	margin: 0;
+}
+
+#info-box #c-l {
+	color: #fff;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 3px;
+	padding-bottom: 0;
+	border-radius: 2px;
+	font-size: 12px;
+}
+
+#dashboard-cl {
+	color: #fff;
+	padding: 15px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	margin-top: 15px !important;
+	border-radius: 5px;
+	font-size: 16px !important;
+}
+
+#info-box #tp {
+	text-decoration: underline;
+	font-size: 12px;
+}
+
+#name {
+	font-size: 28px;
+	/*font-weight: bolder;*/
+	margin-right: 10px;
+}
+
+.wrapper {
+	margin: auto;
+	padding: 0;
+}
+
+/*.navbar-nav > li > a {
+}*/
+
+.footer1{
+	margin-top: 50px;
+	background-color: rgb(235,235,235);
+	height: 20px;
+}
+
+.footer2 {
+	text-align: center;
+	background-color: rgb(225,225,225);
+	padding: 30px;
+	font-weight: bolder;
+}
+.footer3 {
+	background-color: rgb(170,170,170);
+	height: 20px;
+}
+
+#l-panel {
+    height: 610px;;
+}
+
+.tab {
+	/*padding-top: 5px;
+	padding-bottom: 10px;*/
+	padding: 10px;
+	border-bottom: 2px solid rgb(225,225,225);
+	transition: .1s;
+	margin-top: 0 !important;
+}
+
+.tab-sub {
+	/*padding-top: 5px;
+	padding-bottom: 10px;*/
+	padding: 20px;
+	/*padding: 10px;*/
+	/*padding-left: 60px;*/
+	border-bottom: 2px solid rgb(225,225,225);
+	border-top:0;
+	transition: .1s;
+	margin-top: 0 !important;
+	/*background-color: #fff;*/
+	text-align: center;
+	/*box-shadow: inset 2px 4px 8px 0 rgba(0, 0, 0, 0.1);*/
+}
+
+.tab-sub.tab-sub-bottom {
+	border-bottom: 0;
+}
+
+.tab:hover, .tab-sub:hover {
+	background-color: rgba(225,225,225,.3);
+	cursor: pointer;
+}
+
+#beat {
+    /*font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif !important;*/
+	font-size: 16px;
+	/*font-weight: bolder;*/
+	color:#888888;
+	/*text-shadow: 2px 0 #999999;*/
+	letter-spacing:1px;
+}

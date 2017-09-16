@@ -1,0 +1,8 @@
+{
+  "name": "BoT Hackathon 2017",
+  "description": "",
+  "image": "heroku/python",
+  "repository": "",
+  "keywords": ["python", "django" ],
+  "addons": [ "heroku-postgresql" ]
+}
